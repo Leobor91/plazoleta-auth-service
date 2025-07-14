@@ -12,4 +12,6 @@ public interface IUserResponseMapper {
     @Mapping(source = "roleName", target = "role")
     UserResponseDto toResponseDto(User user);
 
+    User toUser(UserResponseDto userResponseDto);
+
 }

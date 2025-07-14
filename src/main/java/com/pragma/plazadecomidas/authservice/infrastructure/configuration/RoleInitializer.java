@@ -32,7 +32,7 @@ public class RoleInitializer {
                 String roleName = entry.getKey();
                 String description = entry.getValue();
                 Optional<RoleEntity> roleExisying = roleRepository.findByName(roleName);
-                if (roleExisying == null){
+                if (roleExisying.isEmpty()){
                     roleRepository.save(RoleEntity.builder()
                                     .name(roleName)
                                     .description(description)

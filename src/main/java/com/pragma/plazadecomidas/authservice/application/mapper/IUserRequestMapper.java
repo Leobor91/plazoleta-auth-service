@@ -13,4 +13,9 @@ public interface IUserRequestMapper {
     @Mapping(target = "roleId", ignore = true)
     @Mapping(target = "password", source = "password")
     User toUser(UserRequestDto userRequestDto);
+
+    @Mapping(target = "password", source = "password")
+    UserRequestDto toUserRequestDto(User user);
+
+
 }

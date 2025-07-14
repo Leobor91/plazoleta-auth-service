@@ -14,9 +14,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -49,8 +51,8 @@ public class UserController {
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Conflicto del Documento de Identidad",
-                                            summary = "El número de documento de identiodad ya está registrado",
-                                            value = "{ \"message\": \"El número de documento de identiodad ya está registrado\" }"
+                                            summary = "El número de documento de identidad ya está registrado",
+                                            value = "{ \"message\": \"El número de documento de identidad ya está registrado\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Rol No Encontrado",
@@ -119,12 +121,12 @@ public class UserController {
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Error de Validación - Formato del número de celular",
-                                            summary = "El número de celular debe tener mas de 11  dígitos y debe iniciar con '+'",
-                                            value = "{ \"message\": \"El número de celular debe tener mas de 11  dígitos y debe iniciar con '+'\" }"
+                                            summary = "El número de celular debe tener mas de 11 dígitos y debe iniciar con '+'",
+                                            value = "{ \"message\": \"El número de celular debe tener mas de 11 dígitos y debe iniciar con '+'\" }"
                                     )
                             }))
     })
-    @PostMapping("/owner")
+    @PostMapping("/create-owner")
     public ResponseEntity<UserResponseDto> saveOwner(
             @Parameter(description = "Request con datos de usuario",
                     required = true,
@@ -143,6 +145,30 @@ public class UserController {
             @Valid @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto response = userHandler.saveOwner(userRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "Verificar si un usuario es propietario por su ID",
+            description = "Consulta el servicio de autenticación para determinar si un usuario con el ID especificado existe y tiene el rol de PROPIETARIO.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa: Devuelve 'true' si es propietario, 'false' si no lo es.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(type = "boolean", example = "true"))),
+            @ApiResponse(responseCode = "409", description = "Usuario no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = "Usuario no encontrado",
+                                            summary = "Usuario no encontrado",
+                                            value = "{ \"message\": \"Usuario no encontrado\" }"
+                                    )}))
+                    })
+    @GetMapping("/isOwner")
+    public ResponseEntity<Boolean> isOwner(
+            @Parameter(description = "ID del usuario a verificar",
+                    required = true, example = "1")
+            @RequestParam Long userId)
+    {
+        return ResponseEntity.ok(userHandler.isOwner(userId));
     }
 
 

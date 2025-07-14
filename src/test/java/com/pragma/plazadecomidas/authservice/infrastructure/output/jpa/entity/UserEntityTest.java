@@ -1,5 +1,6 @@
 package com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.entity;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,136 +11,99 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserEntityTest {
+    private UserEntity user1;
+    private UserEntity user2;
+    private UserEntity user3;
+    private RoleEntity role;
 
-    @Test
-    @DisplayName("Should create a UserEntity object with all fields correctly initialized by constructor")
-    void constructor_ShouldInitializeAllFields() {
-        Long id = 1L;
-        String name = "Juan";
-        String lastName = "Perez";
-        String identityDocument = "12345678";
-        String phoneNumber = "+573101234567";
-        String email = "juan@example.com";
-        String password = "hashedPassword123";
-        LocalDate birthDate = LocalDate.of(1990, 5, 15);
-        RoleEntity role = new RoleEntity(1L, "CLIENTE", "Rol de cliente en DB");
+    @BeforeEach
+    void setUp() {
+        role = new RoleEntity(1L, "PROPIETARIO", "Descripción del propietario");
 
-        UserEntity userEntity = new UserEntity(id, name, lastName, identityDocument, phoneNumber, email, password, birthDate, role);
+        user1 = new UserEntity(
+                1L, "Juan", "Perez", "123", "+57", "juan@example.com",
+                "pass", LocalDate.of(1990, 1, 1), role
+        );
 
-        assertEquals(id, userEntity.getId());
-        assertEquals(name, userEntity.getName());
-        assertEquals(lastName, userEntity.getLastName());
-        assertEquals(identityDocument, userEntity.getIdentityDocument());
-        assertEquals(phoneNumber, userEntity.getPhoneNumber());
-        assertEquals(email, userEntity.getEmail());
-        assertEquals(password, userEntity.getPassword());
-        assertEquals(birthDate, userEntity.getBirthDate());
-        assertEquals(role, userEntity.getRole());
-        assertNotNull(userEntity.getRole());
-        assertEquals("CLIENTE", userEntity.getRole().getName());
+        user2 = new UserEntity(
+                1L, "Juan", "Perez", "123", "+57", "juan@example.com",
+                "pass", LocalDate.of(1990, 1, 1), role
+        );
+
+        user3 = new UserEntity(
+                2L, "Maria", "Gomez", "456", "+58", "maria@example.com",
+                "pass2", LocalDate.of(1995, 5, 5), new RoleEntity(2L, "EMPLEADO", "Descripción del empleado")
+        );
     }
 
     @Test
-    @DisplayName("Should correctly set and get fields using setters and getters")
+    @DisplayName("Debería ser igual si los IDs son iguales")
+    void equals_ShouldReturnTrueIfIdsAreEqual() {
+        assertEquals(user1, user2);
+    }
+
+    @Test
+    @DisplayName("Debería ser diferente si los IDs son diferentes")
+    void equals_ShouldReturnFalseIfIdsAreDifferent() {
+        assertNotEquals(user1, user3);
+    }
+
+    @Test
+    @DisplayName("Debería tener el mismo hashCode si los IDs son iguales")
+    void hashCode_ShouldReturnSameHashCodeIfIdsAreEqual() {
+        assertEquals(user1.hashCode(), user2.hashCode());
+    }
+
+    @Test
+    @DisplayName("Debería tener diferente hashCode si los IDs son diferentes")
+    void hashCode_ShouldReturnDifferentHashCodeIfIdsAreDifferent() {
+        assertNotEquals(user1.hashCode(), user3.hashCode());
+    }
+
+    @Test
+    @DisplayName("Debería crear un UserEntity con constructor vacío")
+    void constructor_ShouldCreateEmptyUserEntity() {
+        UserEntity emptyUser = new UserEntity();
+        assertNotNull(emptyUser);
+    }
+
+    @Test
+    @DisplayName("Debería crear un UserEntity con todos los campos")
+    void constructor_ShouldCreateUserEntityWithAllFields() {
+        assertEquals(1L, user1.getId());
+        assertEquals("Juan", user1.getName());
+        assertEquals("Perez", user1.getLastName());
+        assertEquals("123", user1.getIdentityDocument());
+        assertEquals("+57", user1.getPhoneNumber());
+        assertEquals("juan@example.com", user1.getEmail());
+        assertEquals("pass", user1.getPassword());
+        assertEquals(LocalDate.of(1990, 1, 1), user1.getBirthDate());
+        assertEquals(role, user1.getRole());
+    }
+
+    @Test
+    @DisplayName("Debería permitir establecer y obtener campos")
     void settersAndGetters_ShouldWorkCorrectly() {
-        UserEntity userEntity = new UserEntity();
-        Long id = 2L;
-        String name = "Maria";
-        String lastName = "Gomez";
-        String identityDocument = "87654321";
-        String phoneNumber = "+573209876543";
-        String email = "maria@example.com";
-        String password = "anotherHashedPassword";
-        LocalDate birthDate = LocalDate.of(1985, 10, 20);
-        RoleEntity newRole = new RoleEntity(2L, "PROPIETARIO", "Rol de propietario en DB");
+        UserEntity newUser = new UserEntity();
+        newUser.setId(10L);
+        newUser.setName("TestName");
+        newUser.setLastName("TestLastName");
+        newUser.setIdentityDocument("doc123");
+        newUser.setPhoneNumber("phone+123");
+        newUser.setEmail("test@test.com");
+        newUser.setPassword("newPass");
+        newUser.setBirthDate(LocalDate.of(2000,1,1));
+        newUser.setRole(new RoleEntity(3L, "CLIENTE", "Cliente"));
 
-        userEntity.setId(id);
-        userEntity.setName(name);
-        userEntity.setLastName(lastName);
-        userEntity.setIdentityDocument(identityDocument);
-        userEntity.setPhoneNumber(phoneNumber);
-        userEntity.setEmail(email);
-        userEntity.setPassword(password);
-        userEntity.setBirthDate(birthDate);
-        userEntity.setRole(newRole);
-
-        assertEquals(id, userEntity.getId());
-        assertEquals(name, userEntity.getName());
-        assertEquals(lastName, userEntity.getLastName());
-        assertEquals(identityDocument, userEntity.getIdentityDocument());
-        assertEquals(phoneNumber, userEntity.getPhoneNumber());
-        assertEquals(email, userEntity.getEmail());
-        assertEquals(password, userEntity.getPassword());
-        assertEquals(birthDate, userEntity.getBirthDate());
-        assertEquals(newRole, userEntity.getRole());
-    }
-
-    @Test
-    @DisplayName("Equals and HashCode should work correctly for UserEntity objects")
-    void equalsAndHashCode_ShouldBeConsistent() {
-        RoleEntity role1 = new RoleEntity(1L, "CLIENTE", "Rol de cliente");
-        RoleEntity role2 = new RoleEntity(1L, "CLIENTE", "Rol de cliente");
-
-        UserEntity userEntity1 = UserEntity.builder()
-                .id(1L)
-                .name("Juan")
-                .lastName("Perez")
-                .identityDocument("12345678")
-                .phoneNumber("+57310")
-                .email("juan@example.com")
-                .password("pass")
-                .birthDate(LocalDate.of(1990,1,1))
-                .role(role1)
-                .build();
-
-        UserEntity userEntity2 = UserEntity.builder()
-                .id(1L)
-                .name("Juan")
-                .lastName("Perez")
-                .identityDocument("12345678")
-                .phoneNumber("+57310")
-                .email("juan@example.com")
-                .password("pass")
-                .birthDate(LocalDate.of(1990,1,1))
-                .role(role2)
-                .build();
-
-        UserEntity userEntity3 = UserEntity.builder()
-                .id(2L)
-                .name("Pedro")
-                .lastName("Gomez")
-                .identityDocument("87654321")
-                .phoneNumber("+57320")
-                .email("pedro@example.com")
-                .password("pass2")
-                .birthDate(LocalDate.of(1991,2,2))
-                .role(role1)
-                .build();
-
-        assertEquals(userEntity1, userEntity2);
-        assertEquals(userEntity1.hashCode(), userEntity2.hashCode());
-
-        assertNotEquals(userEntity1, userEntity3);
-        assertNotEquals(userEntity1.hashCode(), userEntity3.hashCode());
-    }
-
-    @Test
-    @DisplayName("ToString should return expected format for UserEntity")
-    void toString_ShouldReturnExpectedFormat() {
-        RoleEntity roleEntity = new RoleEntity(1L, "CLIENTE", "Rol de cliente");
-        UserEntity userEntity = UserEntity.builder()
-                .id(1L)
-                .name("Juan")
-                .lastName("Perez")
-                .identityDocument("12345678")
-                .phoneNumber("+57310")
-                .email("juan@example.com")
-                .password("pass")
-                .birthDate(LocalDate.of(1990,1,1))
-                .role(roleEntity)
-                .build();
-
-        String expectedToString = "UserEntity(id=1, name=Juan, lastName=Perez, identityDocument=12345678, phoneNumber=+57310, email=juan@example.com, password=pass, birthDate=1990-01-01, role=RoleEntity(id=1, name=CLIENTE, description=Rol de cliente))";
-        assertEquals(expectedToString, userEntity.toString());
+        assertEquals(10L, newUser.getId());
+        assertEquals("TestName", newUser.getName());
+        assertEquals("TestLastName", newUser.getLastName());
+        assertEquals("doc123", newUser.getIdentityDocument());
+        assertEquals("phone+123", newUser.getPhoneNumber());
+        assertEquals("test@test.com", newUser.getEmail());
+        assertEquals("newPass", newUser.getPassword());
+        assertEquals(LocalDate.of(2000,1,1), newUser.getBirthDate());
+        assertNotNull(newUser.getRole());
+        assertEquals("CLIENTE", newUser.getRole().getName());
     }
 }

@@ -106,39 +106,66 @@ La aplicación se iniciará por defecto en http://localhost:8081.
 ### puertos
 * **Puerto de la Aplicación:** 8081 (configulable en `application.yml`)
 
+---
+
 ## Endpoints de API REST
 
-Todos los endpoints están prefijados con `/api/v1/users.`
+Todos los endpoints están prefijados con `/api/v1/users`.
 
-* Registro de Propietario:
-  - POST` /api/v1/users/owner`
-    - Crea un nuevo usuario con rol de PROPIETARIO.
-    -  Cuerpo de la Solicitud (JSON):
+---
+
+### Registro de Propietario
+
+`POST /api/v1/users/owner`
+
+Crea un nuevo usuario con rol de **PROPIETARIO**.
+
+**Cuerpo de la Solicitud (JSON):**
+
 ```json
 {
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "documento_de_identidad": "1234567890",
-    "celular": "+573101234567",
-    "correo": "juan.perez@example.com",
-    "contraseña": "StrongPassword123",
-    "fecha_de_nacimiento": "1990-05-15"
+  "name": "Juan",
+  "lastName": "Pérez",
+  "identityDocument": "1234567890",
+  "phoneNumber": "+573101234567",
+  "email": "juan.perez@example.com",
+  "password": "StrongPassword123",
+  "birthDate": "1990-05-15"
 }
 ```
+---
 
-* Respuestas Comunes:
+### Respuestas Comunes para Registro:
 
-  - ```201 Created```: Usuario creado exitosamente.
+* **`201 Created`**: El usuario fue creado exitosamente.
+* **`400 Bad Request`**: Los datos enviados no son válidos (ej. formato incorrecto, campos obligatorios faltantes).
+* **`409 Conflict`**: Se presentó un conflicto de datos; esto puede ocurrir si el correo electrónico, número de teléfono o documento de identidad ya están registrados, o si el rol especificado no existe.
+* **`403 Forbidden`**: No tienes los permisos necesarios para realizar esta acción, posiblemente debido a restricciones de seguridad que impiden la creación del rol solicitado.
+* **`500 Internal Server Error`**: Ocurrió un error inesperado en el servidor durante el procesamiento de la solicitud.
 
-  - ```400 Bad Request```: Datos de entrada inválidos (ej. formato, campos obligatorios).
-  
-  -  ```409 Conflict```: Conflictos de datos (email, teléfono, documento ya existen) o rol no encontrado.
-  
-  -  ```403 Forbidden```: Si hay restricciones de seguridad y el usuario no tiene permisos.
-  
-  -  ```500 Internal Server Error```: Errores inesperados del servidor.
+---
 
-* Otros Endpoints:
+## Verificar Propietario por ID
+
+Este endpoint permite consultar si un usuario específico existe y, en caso afirmativo, si posee el rol de **PROPIETARIO**.
+
+---
+
+### `GET /api/v1/users/isOwner`
+
+**Descripción:** Verifica la existencia y el rol de un usuario.
+
+**Parámetros de Consulta:**
+
+* `userId` (tipo: `Long`, **obligatorio**): El ID del usuario que se desea verificar.
+
+**Respuestas Comunes:**
+
+* **`200 OK`**:
+  * **Cuerpo de la respuesta:** `true` si el usuario con el `userId` proporcionado existe y tiene el rol de **PROPIETARIO**.
+  * **Cuerpo de la respuesta:** `false` si el usuario con el `userId` proporcionado existe pero no tiene el rol de **PROPIETARIO**.
+* **`409 Not Found`**:
+  * Se devuelve si no se encuentra ningún usuario con el `userId` especificado.
 
 
 ### Gestión de Excepciones

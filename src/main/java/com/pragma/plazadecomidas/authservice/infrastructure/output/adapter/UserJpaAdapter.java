@@ -38,4 +38,10 @@ public class UserJpaAdapter implements IUserPersistencePort {
     public User save(User user) {
         return userEntityMapper.toUser(userRepository.save(userEntityMapper.toUserEntity(user)));
     }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id)
+                .map(userEntityMapper::toUser);
+    }
 }

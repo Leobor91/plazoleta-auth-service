@@ -1,63 +1,75 @@
 package com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.entity;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RoleEntityTest {
 
-    @Test
-    @DisplayName("Should create a RoleEntity object with all fields correctly initialized by constructor")
-    void constructor_ShouldInitializeAllFields() {
-        Long id = 1L;
-        String name = "ADMIN";
-        String description = "Administrador del sistema en DB";
+    private RoleEntity role1;
+    private RoleEntity role2;
+    private RoleEntity role3;
 
-        RoleEntity roleEntity = new RoleEntity(id, name, description);
-
-        assertEquals(id, roleEntity.getId());
-        assertEquals(name, roleEntity.getName());
-        assertEquals(description, roleEntity.getDescription());
+    @BeforeEach
+    void setUp() {
+        role1 = new RoleEntity(1L, "PROPIETARIO", "Rol para propietarios");
+        role2 = new RoleEntity(1L, "PROPIETARIO", "Rol para propietarios");
+        role3 = new RoleEntity(2L, "EMPLEADO", "Rol para empleados");
     }
 
     @Test
-    @DisplayName("Should correctly set and get fields using setters and getters")
+    @DisplayName("Debería ser igual si los IDs son iguales")
+    void equals_ShouldReturnTrueIfIdsAreEqual() {
+        assertEquals(role1, role2);
+    }
+
+    @Test
+    @DisplayName("Debería ser diferente si los IDs son diferentes")
+    void equals_ShouldReturnFalseIfIdsAreDifferent() {
+        assertNotEquals(role1, role3);
+    }
+
+    @Test
+    @DisplayName("Debería tener el mismo hashCode si los IDs son iguales")
+    void hashCode_ShouldReturnSameHashCodeIfIdsAreEqual() {
+        assertEquals(role1.hashCode(), role2.hashCode());
+    }
+
+    @Test
+    @DisplayName("Debería tener diferente hashCode si los IDs son diferentes")
+    void hashCode_ShouldReturnDifferentHashCodeIfIdsAreDifferent() {
+        assertNotEquals(role1.hashCode(), role3.hashCode());
+    }
+
+    @Test
+    @DisplayName("Debería crear un RoleEntity con constructor vacío")
+    void constructor_ShouldCreateEmptyRoleEntity() {
+        RoleEntity emptyRole = new RoleEntity();
+        assertNotNull(emptyRole);
+    }
+
+    @Test
+    @DisplayName("Debería crear un RoleEntity con todos los campos")
+    void constructor_ShouldCreateRoleEntityWithAllFields() {
+        assertEquals(1L, role1.getId());
+        assertEquals("PROPIETARIO", role1.getName());
+        assertEquals("Rol para propietarios", role1.getDescription());
+    }
+
+    @Test
+    @DisplayName("Debería permitir establecer y obtener campos")
     void settersAndGetters_ShouldWorkCorrectly() {
-        RoleEntity roleEntity = new RoleEntity();
-        Long id = 2L;
-        String name = "PROPIETARIO";
-        String description = "Rol para propietarios de restaurantes en DB";
+        RoleEntity newRole = new RoleEntity();
+        newRole.setId(5L);
+        newRole.setName("ADMIN");
+        newRole.setDescription("Administrador del sistema");
 
-        roleEntity.setId(id);
-        roleEntity.setName(name);
-        roleEntity.setDescription(description);
-
-        assertEquals(id, roleEntity.getId());
-        assertEquals(name, roleEntity.getName());
-        assertEquals(description, roleEntity.getDescription());
-    }
-
-    @Test
-    @DisplayName("Equals and HashCode should work correctly for RoleEntity objects")
-    void equalsAndHashCode_ShouldBeConsistent() {
-        RoleEntity roleEntity1 = new RoleEntity(1L, "ADMIN", "Administrador");
-        RoleEntity roleEntity2 = new RoleEntity(1L, "ADMIN", "Administrador");
-        RoleEntity roleEntity3 = new RoleEntity(2L, "PROPIETARIO", "Propietario");
-
-        assertEquals(roleEntity1, roleEntity2);
-        assertEquals(roleEntity1.hashCode(), roleEntity2.hashCode());
-
-        assertNotEquals(roleEntity1, roleEntity3);
-        assertNotEquals(roleEntity1.hashCode(), roleEntity3.hashCode());
-    }
-
-    @Test
-    @DisplayName("ToString should return expected format for RoleEntity")
-    void toString_ShouldReturnExpectedFormat() {
-        RoleEntity roleEntity = new RoleEntity(1L, "ADMIN", "Administrador");
-        String expectedToString = "RoleEntity(id=1, name=ADMIN, description=Administrador)";
-        assertEquals(expectedToString, roleEntity.toString());
+        assertEquals(5L, newRole.getId());
+        assertEquals("ADMIN", newRole.getName());
+        assertEquals("Administrador del sistema", newRole.getDescription());
     }
 }

@@ -20,10 +20,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 
 @ContextConfiguration(classes = {TestSecurityConfig.class})
@@ -45,7 +48,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        LocalDate birthDate = LocalDate.of(1990, 5, 15);
+
         userRequestDto = new UserRequestDto(
                 "Nuevo",
                 "Propietario",
@@ -77,7 +80,7 @@ class UserControllerTest {
         when(userHandler.saveOwner(any(UserRequestDto.class))).thenReturn(userResponseDto);
 
         // WHEN & THEN
-        mockMvc.perform(post("/api/v1/users/owner")
+        mockMvc.perform(post("/api/v1/users/create-owner")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isCreated())
@@ -110,7 +113,7 @@ class UserControllerTest {
                 .thenThrow(new PersonalizedException("El Nombre es obligatorio"));
 
         // WHEN & THEN
-        mockMvc.perform(post("/api/v1/users/owner")
+        mockMvc.perform(post("/api/v1/users/create-owner")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isConflict());
@@ -125,10 +128,60 @@ class UserControllerTest {
                 .thenThrow(new PersonalizedException("El email ya está registrado"));
 
         // WHEN & THEN
-        mockMvc.perform(post("/api/v1/users/owner")
+        mockMvc.perform(post("/api/v1/users/create-owner")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRADOR")
+    @DisplayName("Should return 200 OK with true if user is owner")
+    void isOwner_ShouldReturnTrue() throws Exception {
+        // GIVEN
+        Long userId = 1L;
+        when(userHandler.isOwner(anyLong())).thenReturn(true);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/api/v1/users/isOwner")
+                        .param("userId", userId.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isBoolean())
+                .andExpect(jsonPath("$").value(true));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRADOR")
+    @DisplayName("Should return 200 OK with false if user is not owner")
+    void isOwner_ShouldReturnFalse() throws Exception {
+        // GIVEN
+        Long userId = 2L;
+        when(userHandler.isOwner(anyLong())).thenReturn(false);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/api/v1/users/isOwner")
+                        .param("userId", userId.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isBoolean())
+                .andExpect(jsonPath("$").value(false));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMINISTRADOR")
+    @DisplayName("Should return 409 Not Found if user is not found")
+    void isOwner_ShouldReturn409NotFound() throws Exception {
+        // GIVEN
+        Long userId = 3L;
+        when(userHandler.isOwner(anyLong())).thenThrow(new PersonalizedException("Usuario no encontrado"));
+
+        // WHEN & THEN
+        mockMvc.perform(get("/api/v1/users/isOwner")
+                        .param("userId", userId.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensaje").value("Usuario no encontrado"));
     }
 
 }

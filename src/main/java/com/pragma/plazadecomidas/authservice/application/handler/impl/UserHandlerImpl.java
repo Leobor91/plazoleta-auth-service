@@ -35,4 +35,9 @@ public class UserHandlerImpl implements IUserHandler {
                 .orElseThrow(() -> new PersonalizedException(MessageEnum.USER_REQUEST_NULL.getMessage()));
     }
 
+    @Override
+    public boolean isOwner(Long userId) {
+        return userServicePort.isOwner(userId);
+    }
+
 }

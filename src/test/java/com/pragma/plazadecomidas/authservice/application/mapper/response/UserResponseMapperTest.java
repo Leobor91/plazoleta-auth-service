@@ -5,6 +5,7 @@ import com.pragma.plazadecomidas.authservice.application.mapper.IUserResponseMap
 import com.pragma.plazadecomidas.authservice.domain.model.Role;
 import com.pragma.plazadecomidas.authservice.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserResponseMapperTest {
 
+
     private IUserResponseMapper userResponseMapper;
 
     @BeforeEach
@@ -24,6 +26,7 @@ class UserResponseMapperTest {
     }
 
     @Test
+    @DisplayName("Should map all fields correctly from User to UserResponseDto, excluding password")
     void toResponseDto_ShouldMapAllFieldsCorrectlyFromUser() {
         // GIVEN
         LocalDate birthDate = LocalDate.of(1985, 1, 1);
@@ -37,9 +40,10 @@ class UserResponseMapperTest {
                 "ana@example.com",
                 "hashedPassword",
                 birthDate,
+
+
                 String.valueOf(exampleRole.getId()),
-                exampleRole.getName()
-        );
+                exampleRole.getName());
 
         // WHEN
         UserResponseDto responseDto = userResponseMapper.toResponseDto(user);
@@ -49,16 +53,54 @@ class UserResponseMapperTest {
         assertEquals(user.getId(), responseDto.getId());
         assertEquals(user.getName(), responseDto.getName());
         assertEquals(user.getLastName(), responseDto.getLastName());
+        assertEquals(user.getIdentityDocument(), responseDto.getIdentityDocument());
+        assertEquals(user.getPhoneNumber(), responseDto.getPhoneNumber());
         assertEquals(user.getEmail(), responseDto.getEmail());
+        assertEquals(user.getBirthDate(), responseDto.getBirthDate());
+        assertEquals(user.getRoleName(), responseDto.getRole());
+
     }
 
     @Test
+    @DisplayName("Should return null when mapping a null User object")
     void toResponseDto_WithNullUser_ShouldReturnNull() {
         // WHEN
         UserResponseDto responseDto = userResponseMapper.toResponseDto(null);
 
         // THEN
         assertNull(responseDto);
+    }
+
+    @Test
+    @DisplayName("Should correctly map a User object with null fields to UserResponseDto")
+    void toResponseDto_ShouldHandleNullFieldsInUser() {
+        // GIVEN
+        User userWithNulls = new User(
+                2L,
+                "Pedro",
+                null,
+                "112233",
+                null,
+                "pedro@example.com",
+                "somepass",
+                null,
+                null,
+                null
+        );
+
+        // WHEN
+        UserResponseDto responseDto = userResponseMapper.toResponseDto(userWithNulls);
+
+        // THEN
+        assertNotNull(responseDto);
+        assertEquals(userWithNulls.getId(), responseDto.getId());
+        assertEquals(userWithNulls.getName(), responseDto.getName());
+        assertNull(responseDto.getLastName());
+        assertEquals(userWithNulls.getIdentityDocument(), responseDto.getIdentityDocument());
+        assertNull(responseDto.getPhoneNumber());
+        assertEquals(userWithNulls.getEmail(), responseDto.getEmail());
+        assertNull(responseDto.getBirthDate());
+        assertNull(responseDto.getRole());
     }
 
 }

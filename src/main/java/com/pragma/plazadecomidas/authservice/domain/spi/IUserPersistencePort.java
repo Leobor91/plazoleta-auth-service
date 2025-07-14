@@ -14,4 +14,6 @@ public interface IUserPersistencePort {
 
     User save(User user);
 
+    Optional<User> findById(Long id);
+
 }

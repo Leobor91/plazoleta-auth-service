@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface IRolePersistencePort {
 
     Optional<Role> findByName(String name);
+
+    Optional<Role> findById(Long id);
 }

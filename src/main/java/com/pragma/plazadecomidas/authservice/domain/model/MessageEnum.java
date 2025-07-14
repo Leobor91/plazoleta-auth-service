@@ -7,6 +7,7 @@ public enum MessageEnum {
     PHONE_ALREADY_EXISTS("El número de celular ya está registrado"),
     DOCUMENT_ALREADY_EXISTS("El número de documento de identiodad ya está registrado"),
     ROLE_NOT_FOUND("El rol 'PROPIETARIO' no se encontró en el sistema."),
+    USER_NOT_FOUND("Usuario no encontrado"),
     PROPIETARIO("PROPIETARIO"),
     NAME_REQUIRED("El nombre es obligatorio"),
     LASTNAME_REQUIRED("El apellido es obligatorio"),

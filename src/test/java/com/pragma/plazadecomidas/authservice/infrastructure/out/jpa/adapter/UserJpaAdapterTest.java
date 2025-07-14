@@ -6,7 +6,10 @@ import com.pragma.plazadecomidas.authservice.infrastructure.output.adapter.UserJ
 import com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.entity.UserEntity;
 import com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.mapper.IUserEntityMapper;
 import com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.repository.IUserRepository;
+import com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.entity.RoleEntity;
+import com.pragma.plazadecomidas.authservice.domain.model.Role;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,131 +24,176 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserJpaAdapterTest {
 
     @Mock
-    private IUserRepository userRepository; 
+    private IUserRepository userRepository;
     @Mock
-    private IUserEntityMapper userEntityMapper; 
+    private IUserEntityMapper userEntityMapper;
 
     @InjectMocks
-    private UserJpaAdapter userJpaAdapter; 
+    private UserJpaAdapter userJpaAdapter;
 
-    private User domainUser;
-    private UserEntity userEntity;
+    private User testUser;
+    private UserEntity testUserEntity;
+    Role role;
+    RoleEntity roleEntity;
 
     @BeforeEach
     void setUp() {
+        role = new Role(1L, "PROPIETARIO", "Descripción del propietario");
+        roleEntity = new RoleEntity(1L, "PROPIETARIO", "Descripción del propietario");
 
-        domainUser = new User(
+        testUser = User.builder()
+                .id(1L)
+                .name("Test")
+                .lastName("User")
+                .identityDocument("123456789")
+                .phoneNumber("+573001234567")
+                .email("test@example.com")
+                .password("encodedPassword")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .roleName("PROPIETARIO")
+                .build();
+
+        testUserEntity = new UserEntity(
                 1L,
-                "Pedro",
-                "Gomez",
-                "12345678",
+                "Test",
+                "User",
+                "123456789",
                 "+573001234567",
-                "pedro@example.com",
-                "hashedPass",
-                LocalDate.of(1992, 3, 20),
-                "1",
-                "PROPIETARIO"
+                "test@example.com",
+                "encodedPassword",
+                LocalDate.of(1990, 1, 1),
+                roleEntity
         );
-
-        userEntity = new UserEntity(
-                1L,
-                "Pedro",
-                "Gomez",
-                "12345678",
-                "+573001234567",
-                "pedro@example.com",
-                "hashedPass",
-                LocalDate.of(1992, 3, 20),
-                null);
     }
 
     @Test
-    void saveUser_ShouldReturnSavedUser() {
-        
-        // GIVEN
-        when(userEntityMapper.toUserEntity(any(User.class))).thenReturn(userEntity);       
-        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);        
-        when(userEntityMapper.toUser(any(UserEntity.class))).thenReturn(domainUser);
+    @DisplayName("Debería guardar un usuario exitosamente")
+    void saveUser_ShouldSaveUserSuccessfully() {
+        when(userEntityMapper.toUserEntity(any(User.class))).thenReturn(testUserEntity);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(testUserEntity);
+        when(userEntityMapper.toUser(any(UserEntity.class))).thenReturn(testUser);
 
-        // WHEN
-        User savedUser = userJpaAdapter.save(domainUser);
+        User savedUser = userJpaAdapter.save(testUser);
 
-        // THEN
         assertNotNull(savedUser);
-        assertEquals(domainUser.getEmail(), savedUser.getEmail());
-        verify(userEntityMapper, times(1)).toUserEntity(any(User.class));
-        verify(userRepository, times(1)).save(any(UserEntity.class));
-        verify(userEntityMapper, times(1)).toUser(any(UserEntity.class));
+        assertEquals(testUser.getId(), savedUser.getId());
+        verify(userEntityMapper, times(1)).toUserEntity(testUser);
+        verify(userRepository, times(1)).save(testUserEntity);
+        verify(userEntityMapper, times(1)).toUser(testUserEntity);
     }
 
     @Test
-    void findByEmail_ShouldReturnUserWhenFound() {
-        // GIVEN
-        when(userRepository.findByEmail(domainUser.getEmail())).thenReturn(Optional.of(userEntity));
-        when(userEntityMapper.toUser(userEntity)).thenReturn(domainUser);
+    @DisplayName("Debería encontrar un usuario por ID")
+    void findById_ShouldReturnUserWhenFound() {
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUserEntity));
+        when(userEntityMapper.toUser(testUserEntity)).thenReturn(testUser);
 
-        // WHEN
-        Optional<User> foundUser = userJpaAdapter.findByEmail(domainUser.getEmail());
+        Optional<User> foundUser = userJpaAdapter.findById(testUser.getId());
 
-        // THEN
         assertTrue(foundUser.isPresent());
-        assertEquals(domainUser.getEmail(), foundUser.get().getEmail());
-        verify(userRepository, times(1)).findByEmail(domainUser.getEmail());
-        verify(userEntityMapper, times(1)).toUser(userEntity);
+        assertEquals(testUser.getId(), foundUser.get().getId());
+        verify(userRepository, times(1)).findById(testUser.getId());
+        verify(userEntityMapper, times(1)).toUser(testUserEntity);
     }
 
     @Test
-    void findByEmail_ShouldReturnEmptyWhenNotFound() {
-        // GIVEN
+    @DisplayName("Debería retornar Optional.empty si el usuario no es encontrado por ID")
+    void findById_ShouldReturnEmptyOptionalWhenNotFound() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<User> foundUser = userJpaAdapter.findById(999L);
+
+        assertFalse(foundUser.isPresent());
+        verify(userRepository, times(1)).findById(999L);
+        verifyNoInteractions(userEntityMapper);
+    }
+
+    @Test
+    @DisplayName("Debería encontrar un usuario por email")
+    void findByEmail_ShouldReturnUserWhenFound() {
+        when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUserEntity));
+        when(userEntityMapper.toUser(testUserEntity)).thenReturn(testUser);
+
+        Optional<User> foundUser = userJpaAdapter.findByEmail(testUser.getEmail());
+
+        assertTrue(foundUser.isPresent());
+        assertEquals(testUser.getEmail(), foundUser.get().getEmail());
+        verify(userRepository, times(1)).findByEmail(testUser.getEmail());
+        verify(userEntityMapper, times(1)).toUser(testUserEntity);
+    }
+
+    @Test
+    @DisplayName("Debería retornar Optional.empty si el usuario no es encontrado por email")
+    void findByEmail_ShouldReturnEmptyOptionalWhenNotFound() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        // WHEN
         Optional<User> foundUser = userJpaAdapter.findByEmail("nonexistent@example.com");
 
-        // THEN
         assertFalse(foundUser.isPresent());
-        verify(userRepository, times(1)).findByEmail(anyString());
-        verify(userEntityMapper, never()).toUser(any(UserEntity.class)); 
-    
+        verify(userRepository, times(1)).findByEmail("nonexistent@example.com");
+        verifyNoInteractions(userEntityMapper);
     }
 
     @Test
-    void findByIdentityDocument_ShouldReturnUserWhenFound() {
-        // GIVEN
-        when(userRepository.findByIdentityDocument(domainUser.getIdentityDocument())).thenReturn(Optional.of(userEntity));
-        when(userEntityMapper.toUser(userEntity)).thenReturn(domainUser);
+    @DisplayName("Debería encontrar un usuario por número de teléfono")
+    void findByPhoneNumber_ShouldReturnUserWhenFound() {
+        when(userRepository.findByPhoneNumber(testUser.getPhoneNumber())).thenReturn(Optional.of(testUserEntity));
+        when(userEntityMapper.toUser(testUserEntity)).thenReturn(testUser);
 
-        // WHEN
-        Optional<User> foundUser = userJpaAdapter.findByIdentification(domainUser.getIdentityDocument());
+        Optional<User> foundUser = userJpaAdapter.findByPhone(testUser.getPhoneNumber());
 
-        // THEN
         assertTrue(foundUser.isPresent());
-        assertEquals(domainUser.getIdentityDocument(), foundUser.get().getIdentityDocument());
-        verify(userRepository, times(1)).findByIdentityDocument(domainUser.getIdentityDocument());
-        verify(userEntityMapper, times(1)).toUser(userEntity);
+        assertEquals(testUser.getPhoneNumber(), foundUser.get().getPhoneNumber());
+        verify(userRepository, times(1)).findByPhoneNumber(testUser.getPhoneNumber());
+        verify(userEntityMapper, times(1)).toUser(testUserEntity);
     }
 
     @Test
-    void findByIdentityDocument_ShouldReturnEmptyWhenNotFound() {
-        // GIVEN
+    @DisplayName("Debería retornar Optional.empty si el usuario no es encontrado por número de teléfono")
+    void findByPhoneNumber_ShouldReturnEmptyOptionalWhenNotFound() {
+        when(userRepository.findByPhoneNumber(anyString())).thenReturn(Optional.empty());
+
+        Optional<User> foundUser = userJpaAdapter.findByPhone("+571234567890");
+
+        assertFalse(foundUser.isPresent());
+        verify(userRepository, times(1)).findByPhoneNumber("+571234567890");
+        verifyNoInteractions(userEntityMapper);
+    }
+
+    @Test
+    @DisplayName("Debería encontrar un usuario por documento de identidad")
+    void findByIdentityDocument_ShouldReturnUserWhenFound() {
+        when(userRepository.findByIdentityDocument(testUser.getIdentityDocument())).thenReturn(Optional.of(testUserEntity));
+        when(userEntityMapper.toUser(testUserEntity)).thenReturn(testUser);
+
+        Optional<User> foundUser = userJpaAdapter.findByIdentification(testUser.getIdentityDocument());
+
+        assertTrue(foundUser.isPresent());
+        assertEquals(testUser.getIdentityDocument(), foundUser.get().getIdentityDocument());
+        verify(userRepository, times(1)).findByIdentityDocument(testUser.getIdentityDocument());
+        verify(userEntityMapper, times(1)).toUser(testUserEntity);
+    }
+
+    @Test
+    @DisplayName("Debería retornar Optional.empty si el usuario no es encontrado por documento de identidad")
+    void findByIdentityDocument_ShouldReturnEmptyOptionalWhenNotFound() {
         when(userRepository.findByIdentityDocument(anyString())).thenReturn(Optional.empty());
 
-        // WHEN
-        Optional<User> foundUser = userJpaAdapter.findByIdentification("999999");
+        Optional<User> foundUser = userJpaAdapter.findByIdentification("999999999");
 
-        // THEN
         assertFalse(foundUser.isPresent());
-        verify(userRepository, times(1)).findByIdentityDocument(anyString());
-        verify(userEntityMapper, never()).toUser(any(UserEntity.class));
+        verify(userRepository, times(1)).findByIdentityDocument("999999999");
+        verifyNoInteractions(userEntityMapper);
     }
 }

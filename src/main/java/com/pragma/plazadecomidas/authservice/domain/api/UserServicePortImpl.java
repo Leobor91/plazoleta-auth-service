@@ -95,4 +95,14 @@ public class UserServicePortImpl implements IUserServicePort {
                 .orElseThrow(() -> new PersonalizedException(MessageEnum.ROLE_NOT_FOUND.getMessage()));
     }
 
+    @Override
+    public boolean isOwner(Long userId) {
+        User user = userPersistencePort.findById(userId)
+                .orElseThrow(() -> new PersonalizedException(MessageEnum.USER_NOT_FOUND.getMessage()));
+
+        return rolePersistencePort.findById(Long.valueOf(user.getRoleId()))
+                .map(role -> role.getName().equalsIgnoreCase(MessageEnum.PROPIETARIO.getMessage()))
+                .orElse(false);
+    }
+
 }
