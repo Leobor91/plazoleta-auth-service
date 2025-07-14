@@ -48,13 +48,13 @@ jacoco {
 }
 
 tasks.jacocoTestReport {
-	dependsOn test // Asegura que los tests se ejecuten antes de generar el reporte
+	dependsOn test
 	reports {
-		xml.required = true // Genera reporte XML (útil para herramientas CI/CD como SonarQube)
-		csv.required = false // Opcional: genera CSV
-		html.required = true // Genera reporte HTML (para visualización en el navegador)
+		xml.required = true
+		csv.required = false
+		html.required = true
 	}
-	// Excluye clases que no necesitas en la cobertura (ej. clases de configuración, DTOs simples sin lógica)
+
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it,

@@ -114,13 +114,13 @@ Todos los endpoints están prefijados con `/api/v1/users.`
     -  Cuerpo de la Solicitud (JSON):
 ```json
 {
-    "name": "Juan",
-    "lastName": "Pérez",
-    "identityDocument": "1234567890",
-    "phoneNumber": "+573101234567",
-    "email": "juan.perez@example.com",
-    "password": "StrongPassword123",
-    "birthDate": "1990-05-15"
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "documento_de_identidad": "1234567890",
+    "celular": "+573101234567",
+    "correo": "juan.perez@example.com",
+    "contraseña": "StrongPassword123",
+    "fecha_de_nacimiento": "1990-05-15"
 }
 ```
 
@@ -188,34 +188,30 @@ Este reporte te mostrará el porcentaje de líneas, ramas e instrucciones de tu 
 
 ### Umbrales de Cobertura (Opcional)
 
-Si has configurado umbrales de cobertura en tu `build.gradle`, el build fallará si la cobertura cae por debajo de los porcentajes definidos.
+Hemos configurado jacoco en tu build.gradle para generar los reportes de cobertura.
 
 ```gradle
-// Ejemplo de configuración en build.gradle para umbrales y exclusiones
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            element = 'BUNDLE'
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.80 // Mínimo 80% de cobertura de líneas
-            }
-            limit {
-                counter = 'BRANCH'
-                value = 'COVEREDRATIO'
-                minimum = 0.60 // Mínimo 60% de cobertura de ramas
-            }
-            // Excluir paquetes de datos/POJOs que no contienen lógica de negocio compleja
-            excludes = [
-                    'com.pragma.plazadecomidas.authservice.domain.model.*',
-                    'com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.entity.*',
-                    'com.pragma.plazadecomidas.authservice.infrastructure.exception.*', // Si tus excepciones no tienen lógica compleja
-                    'com.pragma.plazadecomidas.authservice.infrastructure.config.*',
-                    'com.pragma.plazadecomidas.authservice.AuthServiceApplication'
-            ]
-        }
-    }
+tasks.jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		csv.required = false
+		html.required = true
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it,
+					exclude: [
+							'com/pragma/plazadecomidas/authservice/AuthServiceApplication.class',
+							'**/infrastructure/configuration/**',
+							'**/application/dto/**',
+							'**/infrastructure/exception/**',
+							'**/domain/model/**',
+							'**/infrastructure/out/jpa/entity/**'
+						])
+		}))
+	}
 }
 ```
 
