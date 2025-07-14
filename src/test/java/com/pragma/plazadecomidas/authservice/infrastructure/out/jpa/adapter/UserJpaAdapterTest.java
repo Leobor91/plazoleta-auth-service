@@ -1,7 +1,6 @@
 package com.pragma.plazadecomidas.authservice.infrastructure.out.jpa.adapter;
 
 
-import com.pragma.plazadecomidas.authservice.domain.model.Role;
 import com.pragma.plazadecomidas.authservice.domain.model.User;
 import com.pragma.plazadecomidas.authservice.infrastructure.output.adapter.UserJpaAdapter;
 import com.pragma.plazadecomidas.authservice.infrastructure.output.jpa.entity.UserEntity;
@@ -29,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserJpaAdapterTest {
+class UserJpaAdapterTest {
 
     @Mock
     private IUserRepository userRepository; 
@@ -41,11 +40,10 @@ public class UserJpaAdapterTest {
 
     private User domainUser;
     private UserEntity userEntity;
-    private Role domainRole;
 
     @BeforeEach
     void setUp() {
-        domainRole = new Role(1L, "ADMIN", "Admin role");
+
         domainUser = new User(
                 1L,
                 "Pedro",

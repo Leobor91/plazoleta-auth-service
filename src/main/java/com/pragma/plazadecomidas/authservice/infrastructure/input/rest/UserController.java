@@ -126,16 +126,20 @@ public class UserController {
     })
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> saveOwner(
-            @Parameter(description = "Request con datos de usuario", required = true, example =
-                    "{\n" +
-                    "  \"nombre\": \"Juan\",\n" +
-                    "  \"apellido\": \"Pérez\",\n" +
-                    "  \"correo\": \"juan.perez@correo.com\",\n" +
-                    "  \"celular\": \"+5755300123720\",\n" +
-                    "  \"documento_de_identidad\": \"126794800\",\n" +
-                    "  \"fecha_de_nacimiento\": \"2010-05-03\",\n" +
-                    "  \"contraseña\": \"Password123*\"\n" +
-                    "}")
+            @Parameter(description = "Request con datos de usuario",
+                    required = true,
+                    example = """
+                {
+                  "nombre": "Juan",
+                  "apellido": "Pérez",
+                  "correo": "juan.perez@correo.com",
+                  "celular": "+5755300123720",
+                  "documento_de_identidad": "126794800",
+                  "fecha_de_nacimiento": "2010-05-03",
+                  "contraseña": "Password123*"
+                }
+                """
+            )
             @Valid @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto response = userHandler.saveOwner(userRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
