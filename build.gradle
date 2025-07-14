@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.3'
+	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.pragma.plazadecomidas'
@@ -24,6 +25,8 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -32,9 +35,56 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+	dependsOn test // Asegura que los tests se ejecuten antes de generar el reporte
+	reports {
+		xml.required = true // Genera reporte XML (útil para herramientas CI/CD como SonarQube)
+		csv.required = false // Opcional: genera CSV
+		html.required = true // Genera reporte HTML (para visualización en el navegador)
+	}
+	// Excluye clases que no necesitas en la cobertura (ej. clases de configuración, DTOs simples sin lógica)
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it,
+					exclude: [
+							'com/pragma/plazadecomidas/authservice/AuthServiceApplication.class',
+							'**/infrastructure/configuration/**',
+							'**/application/dto/**',
+							'**/infrastructure/exception/**',
+							'**/domain/model/**',
+							'**/infrastructure/out/jpa/entity/**'
+						])
+		}))
+	}
+}
+tasks.jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			element = 'BUNDLE'
+			excludes = [
+					'com.pragma.plazadecomidas.authservice.AuthServiceApplication',
+					'com.pragma.plazadecomidas.authservice.domain.model.*',
+					'com.pragma.plazadecomidas.authservice.infrastructure.out.jpa.entity.*'
+			]
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.60
+			}
+		}
+	}
 }
 
 tasks.named('test') {
