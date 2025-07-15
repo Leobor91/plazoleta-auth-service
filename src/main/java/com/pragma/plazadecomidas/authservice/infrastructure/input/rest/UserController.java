@@ -148,11 +148,11 @@ public class UserController {
     }
 
     @Operation(summary = "Verificar si un usuario es propietario por su ID",
-            description = "Consulta el servicio de autenticación para determinar si un usuario con el ID especificado existe y tiene el rol de PROPIETARIO.")
+            description = "Consulta el servicio de autenticación para determinar si el  usuario  existe.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Consulta exitosa: Devuelve 'true' si es propietario, 'false' si no lo es.",
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa: Devuelve un usuario.",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(type = "boolean", example = "true"))),
+                            schema = @Schema(implementation = UserResponseDto.class))),
             @ApiResponse(responseCode = "409", description = "Usuario no encontrado",
                     content = @Content(mediaType = "application/json",
                             examples = {
@@ -163,12 +163,12 @@ public class UserController {
                                     )}))
                     })
     @GetMapping("/isOwner")
-    public ResponseEntity<Boolean> isOwner(
+    public ResponseEntity<UserResponseDto> isOwner(
             @Parameter(description = "ID del usuario a verificar",
                     required = true, example = "1")
             @RequestParam Long userId)
     {
-        return ResponseEntity.ok(userHandler.isOwner(userId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userHandler.isOwner(userId));
     }
 
 

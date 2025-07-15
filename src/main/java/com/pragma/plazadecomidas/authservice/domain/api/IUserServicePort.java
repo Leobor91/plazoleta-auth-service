@@ -6,5 +6,5 @@ public interface IUserServicePort {
 
     User saveOwner(User user);
 
-    boolean isOwner(Long userId);
+    User isOwner(Long userId);
 }

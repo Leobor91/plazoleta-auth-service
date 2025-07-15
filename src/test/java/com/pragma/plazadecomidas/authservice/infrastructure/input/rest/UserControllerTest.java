@@ -136,42 +136,31 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMINISTRADOR")
-    @DisplayName("Should return 200 OK with true if user is owner")
-    void isOwner_ShouldReturnTrue() throws Exception {
+    @DisplayName("Debe retornar 202 Accepted y un UserResponseDto si el usuario es propietario")
+    void isOwner_ShouldReturn202AcceptedWithUserResponseDto() throws Exception {
         // GIVEN
         Long userId = 1L;
-        when(userHandler.isOwner(anyLong())).thenReturn(true);
+        when(userHandler.isOwner(anyLong())).thenReturn(userResponseDto);
 
         // WHEN & THEN
         mockMvc.perform(get("/api/v1/users/isOwner")
                         .param("userId", userId.toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isBoolean())
-                .andExpect(jsonPath("$").value(true));
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.id").value(userResponseDto.getId()))
+                .andExpect(jsonPath("$.nombre").value(userResponseDto.getName()))
+                .andExpect(jsonPath("$.apellido").value(userResponseDto.getLastName()))
+                .andExpect(jsonPath("$.correo").value(userResponseDto.getEmail()))
+                .andExpect(jsonPath("$.documento_de_identidad").value(userResponseDto.getIdentityDocument()))
+                .andExpect(jsonPath("$.celular").value(userResponseDto.getPhoneNumber()))
+                .andExpect(jsonPath("$.fecha_de_nacimiento").value(userResponseDto.getBirthDate().toString()))
+                .andExpect(jsonPath("$.rol").value(userResponseDto.getRole()));
     }
 
     @Test
     @WithMockUser(roles = "ADMINISTRADOR")
-    @DisplayName("Should return 200 OK with false if user is not owner")
-    void isOwner_ShouldReturnFalse() throws Exception {
-        // GIVEN
-        Long userId = 2L;
-        when(userHandler.isOwner(anyLong())).thenReturn(false);
-
-        // WHEN & THEN
-        mockMvc.perform(get("/api/v1/users/isOwner")
-                        .param("userId", userId.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isBoolean())
-                .andExpect(jsonPath("$").value(false));
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMINISTRADOR")
-    @DisplayName("Should return 409 Not Found if user is not found")
-    void isOwner_ShouldReturn409NotFound() throws Exception {
+    @DisplayName("Debe retornar 409 Conflict si el usuario no es encontrado")
+    void isOwner_ShouldReturn409ConflictIfUserNotFound() throws Exception {
         // GIVEN
         Long userId = 3L;
         when(userHandler.isOwner(anyLong())).thenThrow(new PersonalizedException("Usuario no encontrado"));

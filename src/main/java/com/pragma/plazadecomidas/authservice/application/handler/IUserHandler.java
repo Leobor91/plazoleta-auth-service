@@ -7,6 +7,6 @@ public interface IUserHandler {
 
     UserResponseDto saveOwner(UserRequestDto userRequestDto);
 
-    boolean isOwner(Long userId);
+    UserResponseDto isOwner(Long userId);
 
 }

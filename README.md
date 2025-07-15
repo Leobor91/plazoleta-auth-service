@@ -161,10 +161,23 @@ Este endpoint permite consultar si un usuario específico existe y, en caso afir
 
 **Respuestas Comunes:**
 
-* **`200 OK`**:
-  * **Cuerpo de la respuesta:** `true` si el usuario con el `userId` proporcionado existe y tiene el rol de **PROPIETARIO**.
-  * **Cuerpo de la respuesta:** `false` si el usuario con el `userId` proporcionado existe pero no tiene el rol de **PROPIETARIO**.
-* **`409 Not Found`**:
+* **`202 Accepted`**:
+  * **Cuerpo de la respuesta:** 
+   ```json
+    {
+      "id": 5,
+      "nombre": "Sofia",
+      "apellido": "Ramirez",
+      "documento_de_identidad": "1002345678",
+      "celular": "+573009876543",
+      "correo": "sofia.ramirez@example.com",
+      "fecha_de_nacimiento": "1992-11-20",
+      "rol": "PROPIETARIO"
+    }
+  
+   ```
+  * Se devuelve si el usuario con el `userId` especificado existe y tiene el rol de **PROPIETARIO**.
+* **`409 Conflict`**:
   * Se devuelve si no se encuentra ningún usuario con el `userId` especificado.
 
 

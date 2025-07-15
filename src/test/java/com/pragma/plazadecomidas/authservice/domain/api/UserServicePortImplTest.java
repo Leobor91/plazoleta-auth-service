@@ -1,5 +1,6 @@
 package com.pragma.plazadecomidas.authservice.domain.api;
 
+import com.pragma.plazadecomidas.authservice.domain.api.impl.UserServicePortImpl;
 import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedException;
 import com.pragma.plazadecomidas.authservice.domain.model.MessageEnum;
 import com.pragma.plazadecomidas.authservice.domain.model.Role;

@@ -36,8 +36,8 @@ public class UserHandlerImpl implements IUserHandler {
     }
 
     @Override
-    public boolean isOwner(Long userId) {
-        return userServicePort.isOwner(userId);
+    public UserResponseDto isOwner(Long userId) {
+        return userResponseMapper.toResponseDto(userServicePort.isOwner(userId));
     }
 
 }

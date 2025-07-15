@@ -1,7 +1,7 @@
 package com.pragma.plazadecomidas.authservice.infrastructure.configuration;
 
 import com.pragma.plazadecomidas.authservice.domain.api.IUserServicePort;
-import com.pragma.plazadecomidas.authservice.domain.api.UserServicePortImpl;
+import com.pragma.plazadecomidas.authservice.domain.api.impl.UserServicePortImpl;
 import com.pragma.plazadecomidas.authservice.domain.spi.IRolePersistencePort;
 import com.pragma.plazadecomidas.authservice.domain.spi.IUserPersistencePort;
 import com.pragma.plazadecomidas.authservice.domain.util.ValidationUtils;

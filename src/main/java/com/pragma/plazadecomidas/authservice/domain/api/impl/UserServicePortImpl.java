@@ -1,5 +1,6 @@
-package com.pragma.plazadecomidas.authservice.domain.api;
+package com.pragma.plazadecomidas.authservice.domain.api.impl;
 
+import com.pragma.plazadecomidas.authservice.domain.api.IUserServicePort;
 import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedException;
 import com.pragma.plazadecomidas.authservice.domain.model.MessageEnum;
 import com.pragma.plazadecomidas.authservice.domain.model.Role;
@@ -84,25 +85,26 @@ public class UserServicePortImpl implements IUserServicePort {
         Role ownerRole = rolePersistencePort.findByName(MessageEnum.PROPIETARIO.getMessage())
                 .orElseThrow(() -> new PersonalizedException(MessageEnum.ROLE_NOT_FOUND.getMessage()));
 
-        User userToSave = user.toBuilder()
-                .password(passwordEncoder.encode(user.getPassword()))
-                .roleId(String.valueOf(ownerRole.getId()))
-                .build();
-
-        return Optional.of(userToSave)
+        return Optional.of(user.toBuilder()
+                        .password(passwordEncoder.encode(user.getPassword()))
+                        .roleId(String.valueOf(ownerRole.getId()))
+                        .build())
                 .map(userPersistencePort::save)
                 .map(savedUser -> savedUser.toBuilder().roleName(ownerRole.getName()).build())
                 .orElseThrow(() -> new PersonalizedException(MessageEnum.ROLE_NOT_FOUND.getMessage()));
     }
 
     @Override
-    public boolean isOwner(Long userId) {
+    public User isOwner(Long userId) {
         User user = userPersistencePort.findById(userId)
                 .orElseThrow(() -> new PersonalizedException(MessageEnum.USER_NOT_FOUND.getMessage()));
 
         return rolePersistencePort.findById(Long.valueOf(user.getRoleId()))
-                .map(role -> role.getName().equalsIgnoreCase(MessageEnum.PROPIETARIO.getMessage()))
-                .orElse(false);
+                .map(role -> user.toBuilder()
+                        .roleId(String.valueOf(role.getId()))
+                        .roleName(role.getName())
+                        .build())
+                .orElseThrow(() -> new PersonalizedException(MessageEnum.ROLE_NOT_FOUND.getMessage()));
     }
 
 }
