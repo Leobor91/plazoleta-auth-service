@@ -16,14 +16,23 @@ Este es un servicio de microservicio dedicado a la gestión de autenticación y 
 * **Documentación API:** Springdoc-openapi (compatible con Swagger UI)
 * **Librerías de Utilidad:** Lombok
 
-## 🛠️ Configuración del Entorno de Desarrollo
+## 🧩 Arquitectura
+
+El servicio sigue la **Arquitectura Hexagonal**, separando claramente la lógica de negocio (dominio) de los detalles de infraestructura (persistencia, comunicación externa, exposición API).
+
+* **`domain/`**: Contiene la lógica de negocio central (modelos, puertos de entrada `api`, puertos de salida `spi` ).
+* **`application/`**: Capa de aplicación, incluye DTOs (Data Transfer Objects) y mappers para la comunicación entre la infraestructura y el dominio, así como los manejadores de comandos y queries.
+* **`infrastructure/`**: Implementaciones de los puertos, tanto de entrada (`input/rest` para controladores REST) como de salida (`output/jpa` para adaptadores de persistencia JPA, `output/adapter` para adaptadores de servicios externos).
+* **`config/`**: Clases de configuración de Spring.
+
+## 🛠️ Configuración del Entorno de local
 
 Para poner en marcha el proyecto en tu entorno local, sigue los siguientes pasos:
 
 ### Prerrequisitos
 
-* **Java Development Kit (JDK) 17 o superior:** Asegúrate de tenerlo instalado y configurado en tu `PATH`.
-* **Gradle:** Preferiblemente usar el wrapper de Gradle incluido en el proyecto (`./gradlew`).
+* **Java Development Kit (JDK) 17 o superior**
+* **Gradle** (generalmente incluido con Spring Boot y tu IDE)
 * **Base de Datos PostgreSQL:** Necesitas una instancia de MySQL en ejecución.
 * **Cliente SQL:** Opcional, pero recomendado (DBeaver, pgAdmin, MySQL Workbench, etc.) para gestionar la base de datos.
 
@@ -192,13 +201,13 @@ Las excepciones personalizadas (```PersonalizedException```) lanzadas por la ló
 
 ---
 
-## 📄 Documentación API (Swagger UI)
+## 📚 Documentación API (Swagger UI)
 
-Una vez que la aplicación esté en ejecución, puedes acceder a la **documentación interactiva de la API** a través de Swagger UI:
+Una vez que el servicio esté corriendo, puedes acceder a la documentación interactiva de la API a través de Swagger UI en:
 
-**URL:** `http://localhost:8081/swagger-ui/index.html`
+* [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
 
-Aquí podrás ver todos los **endpoints disponibles**, sus **parámetros de solicitud**, **modelos de datos** y **ejemplos de respuestas**, incluyendo los **códigos de error 409 personalizados**.
+Aquí encontrarás todos los endpoints disponibles, sus parámetros de solicitud, ejemplos de respuesta y códigos de estado.
 
 ---
 
@@ -214,7 +223,7 @@ Para ejecutar todas las pruebas unitarias y generar un reporte de cobertura de c
  
 ```
 
-Markdown
+
 
 ---
 
@@ -258,27 +267,3 @@ tasks.jacocoTestReport {
 ```
 
 ---
-
-## 📂 Estructura del Proyecto (Capas Limpias / Hexagonal)
-
-El proyecto sigue una **arquitectura de capas limpias (Clean Architecture)**, inspirada en la arquitectura hexagonal, para separar las preocupaciones y facilitar la mantenibilidad y testabilidad.
-
-* **`domain`**: Contiene la **lógica de negocio central**, modelos (POJOs), interfaces de puertos (SPIs) y excepciones de negocio.
-    * `model`: Clases de dominio que representan **entidades de negocio**.
-    * `api`: Implementaciones de los **puertos de entrada (driving adapters)**. Ej: `UserServicePortImpl`.
-    * `spi`: Interfaces de los **puertos de salida (driven adapters)**. Ej: `IUserPersistencePort`.
-    * `exception`: **Excepciones personalizadas** de negocio.
-    * `util`: Clases de utilidad con lógica de **validación genérica**.
-
-* **`application`**: Contiene **mappers** y **handlers de comandos/queries**.
-    * `mapper`: Interfaces y clases para **mapear entre modelos de dominio y DTOs/Entidades**.
-    * `handler`: Clases que **orquestan el uso de los servicios de dominio**.
-
-* **`infrastructure`**: Implementaciones específicas de la tecnología (**bases de datos, REST, seguridad**).
-    * `input.rest`: **Controladores REST** (puertos de entrada).
-    * `output.jpa.entity`: **Entidades JPA** para la persistencia.
-    * `output.jpa.mapper`: Mappers entre **entidades JPA y modelos de dominio**.
-    * `output.adapter`: Implementaciones de los **puertos de persistencia (driven adapters)**.
-    * `config`: Clases de **configuración** (ej. seguridad, beans).
-    * `exception`: Clases de excepción relacionadas con la infraestructura (si las hay).
-    * `input.rest.advice`: **Manejo global de excepciones** para la capa REST.

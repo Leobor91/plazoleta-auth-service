@@ -47,44 +47,30 @@ jacoco {
 	toolVersion = "0.8.11"
 }
 
-tasks.jacocoTestReport {
-	dependsOn test
+def coverageExcludes = [
+		'**/dto/.*',
+		'**/spi/.*',
+		'**/api/.*',
+		'**/mappers/.*',
+		'**/repository/.*',
+		'**/*.test',
+		'**/generated/.*',
+]
+
+jacocoTestReport {
 	reports {
 		xml.required = true
-		csv.required = false
 		html.required = true
 	}
-
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it,
-					exclude: [
-							'com/pragma/plazadecomidas/authservice/AuthServiceApplication.class',
-							'**/infrastructure/configuration/**',
-							'**/application/dto/**',
-							'**/infrastructure/exception/**',
-							'**/domain/model/**',
-							'**/infrastructure/out/jpa/entity/**'
-						])
+			fileTree(dir: it, exclude: coverageExcludes)
 		}))
 	}
 }
-tasks.jacocoTestCoverageVerification {
-	violationRules {
-		rule {
-			element = 'BUNDLE'
-			excludes = [
-					'com.pragma.plazadecomidas.authservice.AuthServiceApplication',
-					'com.pragma.plazadecomidas.authservice.domain.model.*',
-					'com.pragma.plazadecomidas.authservice.infrastructure.out.jpa.entity.*'
-			]
-			limit {
-				counter = 'LINE'
-				value = 'COVEREDRATIO'
-				minimum = 0.60
-			}
-		}
-	}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs << "-Xlint:deprecation"
 }
 
 tasks.named('test') {

@@ -2,7 +2,7 @@ package com.pragma.plazadecomidas.authservice.domain.model;
 
 public enum MessageEnum {
 
-    USER_REQUEST_NULL("El UserRequestDto no puede ser nulo"),
+    USER_REQUEST_NULL("El Usuario no puede ser nulo"),
     EMAIL_ALREADY_EXISTS("El Correo ya está registrado"),
     PHONE_ALREADY_EXISTS("El número de celular ya está registrado"),
     DOCUMENT_ALREADY_EXISTS("El número de documento de identiodad ya está registrado"),
