@@ -36,4 +36,16 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(PersonalizedNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(PersonalizedNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(PersonalizedBadRequestException.class)
+    public ResponseEntity<ExceptionResponse> handleBadRequestException(PersonalizedBadRequestException ex) {
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
 }

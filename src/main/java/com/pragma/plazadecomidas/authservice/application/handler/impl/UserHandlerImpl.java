@@ -6,6 +6,7 @@ import com.pragma.plazadecomidas.authservice.application.mapper.IUserResponseMap
 import com.pragma.plazadecomidas.authservice.application.dto.request.UserRequestDto;
 import com.pragma.plazadecomidas.authservice.application.dto.response.UserResponseDto;
 import com.pragma.plazadecomidas.authservice.domain.api.IUserServicePort;
+import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedBadRequestException;
 import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedException;
 import com.pragma.plazadecomidas.authservice.domain.model.MessageEnum;
 import com.pragma.plazadecomidas.authservice.domain.util.ValidationUtils;
@@ -32,7 +33,7 @@ public class UserHandlerImpl implements IUserHandler {
                 .map(userRequestMapper::toUser)
                 .map(userServicePort::saveOwner)
                 .map(userResponseMapper::toResponseDto)
-                .orElseThrow(() -> new PersonalizedException(MessageEnum.USER_REQUEST_NULL.getMessage()));
+                .orElseThrow(() -> new PersonalizedBadRequestException(MessageEnum.USER_REQUEST_NULL.getMessage()));
     }
 
     @Override
