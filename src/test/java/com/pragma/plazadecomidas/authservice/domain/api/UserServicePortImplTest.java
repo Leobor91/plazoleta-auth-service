@@ -1,7 +1,9 @@
 package com.pragma.plazadecomidas.authservice.domain.api;
 
 import com.pragma.plazadecomidas.authservice.domain.api.impl.UserServicePortImpl;
+import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedBadRequestException;
 import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedException;
+import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedNotFoundException;
 import com.pragma.plazadecomidas.authservice.domain.model.MessageEnum;
 import com.pragma.plazadecomidas.authservice.domain.model.Role;
 import com.pragma.plazadecomidas.authservice.domain.model.User;
@@ -82,7 +84,7 @@ class UserServicePortImplTest {
 
         when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
 
-        // Mock para el guardado de usuario
+
         when(userPersistencePort.save(any(User.class))).thenAnswer(invocation -> {
             User userArg = invocation.getArgument(0);
             return userArg.toBuilder().id(1L).build(); // Simula que el usuario es guardado y se le asigna un ID
@@ -98,8 +100,7 @@ class UserServicePortImplTest {
         assertEquals(1L, savedUser.getId());
         assertEquals("hashedPassword", savedUser.getPassword());
         assertEquals(String.valueOf(ownerRole.getId()), savedUser.getRoleId());
-        assertEquals(ownerRole.getName(), savedUser.getRoleName()); // Verifica que el roleName se añade
-
+        assertEquals(ownerRole.getName(), savedUser.getRoleName());
         verify(userPersistencePort).findByEmail(validUser.getEmail());
         verify(userPersistencePort).findByPhone(validUser.getPhoneNumber());
         verify(userPersistencePort).findByIdentification(validUser.getIdentityDocument());
@@ -108,14 +109,13 @@ class UserServicePortImplTest {
         verify(userPersistencePort).save(any(User.class));
     }
 
-    // --- Tests para validaciones de campos requeridos (básicas) ---
 
     @Test
     @DisplayName("Should throw PersonalizedException when name is invalid")
     void saveOwner_InvalidName_ThrowsException() {
         when(validationUtils.isValid(validUser.getName())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.NAME_REQUIRED.getMessage(), exception.getMessage());
@@ -127,7 +127,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidLastName_ThrowsException() {
         when(validationUtils.isValid(validUser.getLastName())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.LASTNAME_REQUIRED.getMessage(), exception.getMessage());
@@ -139,7 +139,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidIdentityDocument_ThrowsException() {
         when(validationUtils.isValid(validUser.getIdentityDocument())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.DOCUMENT_REQUIRED.getMessage(), exception.getMessage());
@@ -151,7 +151,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidIdentityDocumentFormat_ThrowsException() {
         when(validationUtils.containsOnlyNumbers(validUser.getIdentityDocument())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.DOCUMENT_FORMAT.getMessage(), exception.getMessage());
@@ -163,7 +163,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidPhoneNumber_ThrowsException() {
         when(validationUtils.isValid(validUser.getPhoneNumber())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.PHONE_REQUIRED.getMessage(), exception.getMessage());
@@ -175,7 +175,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidPhoneNumberFormat_ThrowsException() {
         when(validationUtils.isValidPhoneStructure(validUser.getPhoneNumber())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.PHONE_FORMAT.getMessage(), exception.getMessage());
@@ -187,7 +187,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidEmail_ThrowsException() {
         when(validationUtils.isValid(validUser.getEmail())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.EMAIL_REQUIRED.getMessage(), exception.getMessage());
@@ -199,7 +199,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidEmailFormat_ThrowsException() {
         when(validationUtils.isValidEmailStructure(validUser.getEmail())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.EMAIL_FORMAT.getMessage(), exception.getMessage());
@@ -211,7 +211,7 @@ class UserServicePortImplTest {
     void saveOwner_InvalidPassword_ThrowsException() {
         when(validationUtils.isValid(validUser.getPassword())).thenReturn(false);
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException  exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.PASSWORD_REQUIRED.getMessage(), exception.getMessage());
@@ -223,7 +223,7 @@ class UserServicePortImplTest {
     void saveOwner_NullBirthDate_ThrowsException() {
         validUser.setBirthDate(null); // Set to null to trigger validation
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedBadRequestException exception = assertThrows(PersonalizedBadRequestException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.BIRTHDATE_REQUIRED.getMessage(), exception.getMessage());
@@ -254,8 +254,6 @@ class UserServicePortImplTest {
         verify(userPersistencePort, never()).save(any(User.class));
     }
 
-
-    // --- Tests para validaciones de existencia (email, teléfono, documento) ---
 
     @Test
     @DisplayName("Should throw PersonalizedException when email already exists")
@@ -293,14 +291,13 @@ class UserServicePortImplTest {
         verify(userPersistencePort, never()).save(any(User.class));
     }
 
-    // --- Tests para el rol ---
 
     @Test
     @DisplayName("Should throw PersonalizedException when owner role is not found")
     void saveOwner_OwnerRoleNotFound_ThrowsException() {
         when(rolePersistencePort.findByName(MessageEnum.PROPIETARIO.getMessage())).thenReturn(Optional.empty());
 
-        PersonalizedException exception = assertThrows(PersonalizedException.class, () ->
+        PersonalizedNotFoundException exception = assertThrows(PersonalizedNotFoundException.class, () ->
                 userServicePort.saveOwner(validUser));
 
         assertEquals(MessageEnum.ROLE_NOT_FOUND.getMessage(), exception.getMessage());

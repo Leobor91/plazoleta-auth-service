@@ -1,6 +1,7 @@
 package com.pragma.plazadecomidas.authservice.domain.api.impl;
 
 import com.pragma.plazadecomidas.authservice.domain.api.IUserServicePort;
+import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedBadRequestException;
 import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedException;
 import com.pragma.plazadecomidas.authservice.domain.exception.PersonalizedNotFoundException;
 import com.pragma.plazadecomidas.authservice.domain.model.MessageEnum;
@@ -32,34 +33,34 @@ public class UserServicePortImpl implements IUserServicePort {
     public User saveOwner(User user) {
 
         if (!validationUtils.isValid(user.getName())) {
-            throw new PersonalizedException(MessageEnum.NAME_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.NAME_REQUIRED.getMessage());
         }
         if (!validationUtils.isValid(user.getLastName())) {
-            throw new PersonalizedException(MessageEnum.LASTNAME_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.LASTNAME_REQUIRED.getMessage());
         }
         if (!validationUtils.isValid(user.getIdentityDocument())) {
-            throw new PersonalizedException(MessageEnum.DOCUMENT_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.DOCUMENT_REQUIRED.getMessage());
         }
         if (!validationUtils.containsOnlyNumbers(user.getIdentityDocument())) {
-            throw new PersonalizedException(MessageEnum.DOCUMENT_FORMAT.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.DOCUMENT_FORMAT.getMessage());
         }
         if (!validationUtils.isValid(user.getPhoneNumber())) {
-            throw new PersonalizedException(MessageEnum.PHONE_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.PHONE_REQUIRED.getMessage());
         }
         if (!validationUtils.isValidPhoneStructure(user.getPhoneNumber())) {
-            throw new PersonalizedException(MessageEnum.PHONE_FORMAT.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.PHONE_FORMAT.getMessage());
         }
         if (!validationUtils.isValid(user.getEmail())) {
-            throw new PersonalizedException(MessageEnum.EMAIL_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.EMAIL_REQUIRED.getMessage());
         }
         if (!validationUtils.isValidEmailStructure(user.getEmail())) {
-            throw new PersonalizedException(MessageEnum.EMAIL_FORMAT.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.EMAIL_FORMAT.getMessage());
         }
         if (!validationUtils.isValid(user.getPassword())) {
-            throw new PersonalizedException(MessageEnum.PASSWORD_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.PASSWORD_REQUIRED.getMessage());
         }
         if (user.getBirthDate() == null) {
-            throw new PersonalizedException(MessageEnum.BIRTHDATE_REQUIRED.getMessage());
+            throw new PersonalizedBadRequestException(MessageEnum.BIRTHDATE_REQUIRED.getMessage());
         }
         if (!validationUtils.isBirthDateNotFuture(user.getBirthDate())) {
             throw new PersonalizedException(MessageEnum.BIRTHDATE_PAST.getMessage());

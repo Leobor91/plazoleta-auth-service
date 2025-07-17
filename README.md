@@ -75,7 +75,7 @@ spring:
         format_sql: true
 ```
 
-Asegúrate de reemplazar your_username y your_password con tus credenciales de MySQL.
+Reemplaza `your_mysql_username` y `your_mysql_password` con tus credenciales de MySQL.
 
 ### Construir el Proyecto
 
@@ -105,7 +105,7 @@ O directamente desde Gradle:
 
 ./gradlew bootRun
 ```
-La aplicación se iniciará por defecto en http://localhost:8081.
+La aplicación se iniciará por defecto en http://localhost:8081. (o el puerto configurado en `application.yml`).
 
 
 ---
@@ -125,7 +125,7 @@ Todos los endpoints están prefijados con `/api/v1/users`.
 
 ### Registro de Propietario
 
-`POST /api/v1/users/owner`
+`POST /api/v1/users/create-owner`
 
 Crea un nuevo usuario con rol de **PROPIETARIO**.
 
@@ -133,13 +133,13 @@ Crea un nuevo usuario con rol de **PROPIETARIO**.
 
 ```json
 {
-  "name": "Juan",
-  "lastName": "Pérez",
-  "identityDocument": "1234567890",
-  "phoneNumber": "+573101234567",
-  "email": "juan.perez@example.com",
-  "password": "StrongPassword123",
-  "birthDate": "1990-05-15"
+  "nombre": "Samuel",
+  "apellido": "Ramirez",
+  "correo": "samuel.Ramirez@example.com",
+  "celular": "+5730987543",
+  "documento_de_identidad": "1002374567",
+  "fecha_de_nacimiento": "1992-11-20",
+  "contraseña": "SecurePass!789"
 }
 ```
 ---
@@ -148,6 +148,7 @@ Crea un nuevo usuario con rol de **PROPIETARIO**.
 
 * **`201 Created`**: El usuario fue creado exitosamente.
 * **`400 Bad Request`**: Los datos enviados no son válidos (ej. formato incorrecto, campos obligatorios faltantes).
+* **`404 Not Found`**: no se encontro algun recurso (usuario, rol etec).
 * **`409 Conflict`**: Se presentó un conflicto de datos; esto puede ocurrir si el correo electrónico, número de teléfono o documento de identidad ya están registrados, o si el rol especificado no existe.
 * **`403 Forbidden`**: No tienes los permisos necesarios para realizar esta acción, posiblemente debido a restricciones de seguridad que impiden la creación del rol solicitado.
 * **`500 Internal Server Error`**: Ocurrió un error inesperado en el servidor durante el procesamiento de la solicitud.
@@ -186,14 +187,14 @@ Este endpoint permite consultar si un usuario específico existe y, en caso afir
   
    ```
   * Se devuelve si el usuario con el `userId` especificado existe y tiene el rol de **PROPIETARIO**.
-* **`409 Conflict`**:
+* **`404 Not Found`**:
   * Se devuelve si no se encuentra ningún usuario con el `userId` especificado.
-
+---
 
 ### Gestión de Excepciones
 
-Las excepciones personalizadas (```PersonalizedException```) lanzadas por la lógica de negocio son capturadas por un 
-```@ControllerAdvice``` y mapeadas a respuestas HTTP ```409 Conflict```
+Las excepciones personalizadas (```PersonalizedException```, ```PersonalizedBadRequestException```, ```PersonalizedNotFoundException```) lanzadas por la lógica de negocio son capturadas por un 
+```@ControllerAdvice``` y mapeadas a respuestas HTTP ```409 Conflict```, ```400 Bad Request```, ```404 Not Foundt```
 , con un cuerpo JSON que contiene el mensaje de error.
 
 * Ubicación del ControllerAdvice: 
@@ -236,10 +237,6 @@ Una vez generadas las pruebas, puedes ver el **reporte HTML de JaCoCo** en tu na
 Este reporte te mostrará el porcentaje de líneas, ramas e instrucciones de tu código que están cubiertas por los tests.
 
 ---
-
-### Umbrales de Cobertura (Opcional)
-
-Hemos configurado jacoco en tu build.gradle para generar los reportes de cobertura.
 
 ```gradle
 tasks.jacocoTestReport {
