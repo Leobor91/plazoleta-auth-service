@@ -3,6 +3,7 @@ package com.pragma.plazadecomidas.authservice.infrastructure.input.rest;
 import com.pragma.plazadecomidas.authservice.application.dto.request.UserRequestDto;
 import com.pragma.plazadecomidas.authservice.application.dto.response.UserResponseDto;
 import com.pragma.plazadecomidas.authservice.application.handler.IUserHandler;
+import com.pragma.plazadecomidas.authservice.domain.exception.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,93 +37,99 @@ public class UserController {
                     description = "Propietario creado con éxito",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponseDto.class))),
-            @ApiResponse(responseCode = "409", description = "Conflicto en la creación de usuario",
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida o datos faltantes/incorrectos",
                     content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class),
                             examples = {
-                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Conflicto de Correo",
-                                            summary = "El Correo ya está registrado",
-                                            value = "{ \"message\": \"El Correo ya está registrado\" }"
-                                    ),
-                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Conflicto del Celular",
-                                            summary = "El número de celular ya está registrado",
-                                            value = "{ \"message\": \"El número de celular ya está registrado\" }"
-                                    ),
-                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Conflicto del Documento de Identidad",
-                                            summary = "El número de documento de identidad ya está registrado",
-                                            value = "{ \"message\": \"El número de documento de identidad ya está registrado\" }"
-                                    ),
-                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Rol No Encontrado",
-                                            summary = "El rol 'PROPIETARIO' no se encontró en el sistema",
-                                            value = "{ \"message\": \"El rol 'PROPIETARIO' no se encontró en el sistema.\" }"
-                                    ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Error de Validación - Nombre Requerido",
                                             summary = "El nombre es obligatorio",
-                                            value = "{ \"message\": \"El nombre es obligatorio\" }"
+                                            value = "{ \"mensaje\": \"El nombre es obligatorio\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Error de Validación - Apellido Requerido",
                                             summary = "El apellido es obligatorio",
-                                            value = "{ \"message\": \"El apellido es obligatorio\" }"
+                                            value = "{ \"mensaje\": \"El apellido es obligatorio\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Número de documento Requerido",
+                                            name = "Error de Validación - Documento Requerido",
                                             summary = "El número de documento es obligatorio",
-                                            value = "{ \"message\": \"El número de documento es obligatorio\" }"
+                                            value = "{ \"mensaje\": \"El número de documento es obligatorio\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Formato del número de documento",
+                                            name = "Error de Validación - Formato Documento",
                                             summary = "El número de documento debe contener solo números",
-                                            value = "{ \"message\": \"El número de documento debe contener solo números\" }"
+                                            value = "{ \"mensaje\": \"El número de documento debe contener solo números\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Número de celular Requerido",
+                                            name = "Error de Validación - Celular Requerido",
                                             summary = "El número de celular es obligatorio",
-                                            value = "{ \"message\": \"El número de celular es obligatorio\" }"
+                                            value = "{ \"mensaje\": \"El número de celular es obligatorio\" }"
+                                    ),
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = "Error de Validación - Formato Celular",
+                                            summary = "El número de celular debe ser únicamente numérico y puede iniciar con '+'. Por ejemplo: +573005698325.",
+                                            value = "{ \"mensaje\": \"El número de celular debe ser únicamente numérico y puede iniciar con '+'. Por ejemplo: +573005698325.\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Error de Validación - Correo Requerido",
-                                            summary = "El Correo es obligatorio",
-                                            value = "{ \"message\": \"El Correo es obligatorio\" }"
+                                            summary = "El correo es obligatorio",
+                                            value = "{ \"mensaje\": \"El correo es obligatorio\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Error de Validación - Formato Correo",
-                                            summary = "El Correo debe tener un formato válido",
-                                            value = "{ \"message\": \"El Correo debe tener un formato válido\" }"
+                                            summary = "El correo debe tener un formato válido",
+                                            value = "{ \"mensaje\": \"El correo debe tener un formato válido\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Error de Validación - Contraseña Requerida",
                                             summary = "La contraseña es obligatoria",
-                                            value = "{ \"message\": \"La contraseña es obligatoria\" }"
+                                            value = "{ \"mensaje\": \"La contraseña es obligatoria\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Fecha de nacimiento Requerida",
+                                            name = "Error de Validación - Fecha Nacimiento Requerida",
                                             summary = "La fecha de nacimiento es obligatoria",
-                                            value = "{ \"message\": \"La fecha de nacimiento es obligatoria\" }"
+                                            value = "{ \"mensaje\": \"La fecha de nacimiento es obligatoria\" }"
+                                    )
+                            })),
+            @ApiResponse(responseCode = "404", description = "Recurso no encontrado (ej. Rol no existe)",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class),
+                            examples = {
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = "Rol No Encontrado",
+                                            summary = "El rol 'PROPIETARIO' no se encontró en el sistema",
+                                            value = "{ \"mensaje\": \"El rol 'PROPIETARIO' no se encontró en el sistema.\" }"
+                                    )
+                            })),
+            @ApiResponse(responseCode = "409", description = "Conflicto con el estado actual del sistema o reglas de negocio",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class),
+                            examples = {
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = "Conflicto de Correo Existente",
+                                            summary = "El correo ya está registrado",
+                                            value = "{ \"mensaje\": \"El Correo ya está registrado\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Formato fecha de nacimiento",
-                                            summary = "La fecha de nacimiento debe tener el formato 'YYYY-MM-DD",
-                                            value = "{ \"message\": \"La fecha de nacimiento debe tener el formato 'YYYY-MM-DD\" }"
+                                            name = "Conflicto de Celular Existente",
+                                            summary = "El número de celular ya está registrado",
+                                            value = "{ \"mensaje\": \"El número de celular ya está registrado\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Rango de fecha de nacimiento",
-                                            summary = "La persona debe ser mayor de edad (18 años)",
-                                            value = "{ \"message\": \"La persona debe ser mayor de edad (18 años)\" }"
+                                            name = "Conflicto de Documento Existente",
+                                            summary = "El número de documento de identidad ya está registrado",
+                                            value = "{ \"mensaje\": \"El número de documento de identidad ya está registrado\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Rango de fecha de nacimiento",
+                                            name = "Error de Validación - Fecha de nacimiento futura",
                                             summary = "La fecha de nacimiento debe ser una fecha pasada",
-                                            value = "{ \"message\": \"La fecha de nacimiento debe ser una fecha pasada\" }"
+                                            value = "{ \"mensaje\": \"La fecha de nacimiento debe ser una fecha pasada\" }"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "Error de Validación - Formato del número de celular",
-                                            summary = "El número de celular debe tener mas de 11 dígitos y debe iniciar con '+'",
-                                            value = "{ \"message\": \"El número de celular debe tener mas de 11 dígitos y debe iniciar con '+'\" }"
+                                            name = "Error de Validación - Menor de edad",
+                                            summary = "La persona debe ser mayor de edad (18 años)",
+                                            value = "{ \"mensaje\": \"La persona debe ser mayor de edad (18 años)\" }"
                                     )
                             }))
     })
@@ -153,15 +160,22 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Consulta exitosa: Devuelve un usuario.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponseDto.class))),
-            @ApiResponse(responseCode = "409", description = "Usuario no encontrado",
+            @ApiResponse(responseCode = "404", description = "Usuario o rol no encontrado",
                     content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class),
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Usuario no encontrado",
                                             summary = "Usuario no encontrado",
-                                            value = "{ \"message\": \"Usuario no encontrado\" }"
-                                    )}))
-                    })
+                                            value = "{ \"mensaje\": \"Usuario no encontrado\" }"
+                                    ),
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = "Rol no encontrado para el usuario",
+                                            summary = "El rol asociado al usuario no se encontró.",
+                                            value = "{ \"mensaje\": \"El rol 'PROPIETARIO' no se encontró en el sistema.\" }"
+                                    )
+                            }))
+    })
     @GetMapping("/isOwner")
     public ResponseEntity<UserResponseDto> isOwner(
             @Parameter(description = "ID del usuario a verificar",
