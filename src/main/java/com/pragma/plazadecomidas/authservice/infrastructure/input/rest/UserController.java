@@ -94,7 +94,6 @@ public class UserController {
                             })),
             @ApiResponse(responseCode = "404", description = "Recurso no encontrado (ej. Rol no existe)",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class),
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Rol No Encontrado",
@@ -104,7 +103,6 @@ public class UserController {
                             })),
             @ApiResponse(responseCode = "409", description = "Conflicto con el estado actual del sistema o reglas de negocio",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ExceptionResponse.class),
                             examples = {
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "Conflicto de Correo Existente",
