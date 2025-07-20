@@ -2,6 +2,7 @@ package com.pragma.plazadecomidas.authservice.application.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pragma.plazadecomidas.authservice.infrastructure.utils.ValidationConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

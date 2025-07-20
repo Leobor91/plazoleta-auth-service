@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class User {
 
     private Long id;
@@ -22,4 +22,10 @@ public class User {
     private String email;
     private String password;
     private Role role;
+
+    public boolean isAdult() {
+         return birthDate != null
+                 && birthDate.plusYears(18).
+                 isBefore(LocalDate.now());
+    }
 }
