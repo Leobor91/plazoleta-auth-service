@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Gestión de Usuarios", description = "Operaciones relacionadas con la creación y administración de usuarios propietarios de restaurantes.")
 
-public class UserRestControler {
+public class UserRestController {
 
     private final IOwnerHandler ownerHandler;
 

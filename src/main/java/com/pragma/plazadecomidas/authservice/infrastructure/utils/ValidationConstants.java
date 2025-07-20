@@ -64,12 +64,13 @@ public class ValidationConstants {
     public static final String USER_MUST_BE_ADULT_MESSAGE = "El usuario debe ser mayor de " + MIN_AGE_FOR_ADULT + " años.";
     public static final String EMAIL_ALREADY_EXISTS_MESSAGE = "Ya existe un usuario con el correo electrónico: ";
     public static final String DNI_ALREADY_EXISTS_MESSAGE = "Ya existe un usuario con el número de documento de identidad: ";
-    public static final String METHOD_NOT_IMPLEMENTED_MESSAGE = "Método aún no implementado.";
+    public static final String ERROR_VALIDATION_MESSAGE = "Error de validación: ";
     public static final String PHONE_ALREADY_EXISTS_MESSAGE = "Ya existe un usuario con el número de celular: ";
     public static final String USER_NOT_FOUND_MESSAGE = "Usuario no encontrado";
     public static final String ROLE_NOT_FOUND_MESSAGE = "El rol 'PROPIETARIO' no se encontró en el sistema.";
     public static final String NOT_SAVED_MESSAGE = "El usuario no pudo ser guardado, verifique los datos ingresados.";
     public static final String  MESSAGE_KEY = "mensaje";
+    public static final String ERROR_500_MESSAGE = "Error interno del servidor. Por favor, inténtelo más tarde.";
 
 
     private ValidationConstants() {

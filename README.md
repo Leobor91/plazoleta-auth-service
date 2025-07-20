@@ -198,7 +198,7 @@ Las excepciones personalizadas (```PersonalizedException```, ```PersonalizedBadR
 , con un cuerpo JSON que contiene el mensaje de error.
 
 * Ubicación del ControllerAdvice: 
-```com.pragma.plazadecomidas.authservice.infrastructure.exception.GlobalExceptionHandler.java```
+```com.pragma.plazadecomidas.authservice.infrastructure.exception.ControllerAdvisor.java```
 
 ---
 
@@ -239,25 +239,29 @@ Este reporte te mostrará el porcentaje de líneas, ramas e instrucciones de tu 
 ---
 
 ```gradle
-tasks.jacocoTestReport {
-	dependsOn test
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+def coverageExcludes = [
+		'**/dto/**',
+		'**/spi/**',
+		'**/api/**',
+		'**/mapper/.*',
+		'**/repository/.*',
+		'**/*.test',
+		'**/generated/.*',
+]
+
+jacocoTestReport {
 	reports {
 		xml.required = true
-		csv.required = false
 		html.required = true
 	}
-
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it,
-					exclude: [
-							'com/pragma/plazadecomidas/authservice/AuthServiceApplication.class',
-							'**/infrastructure/configuration/**',
-							'**/application/dto/**',
-							'**/infrastructure/exception/**',
-							'**/domain/model/**',
-							'**/infrastructure/out/jpa/entity/**'
-						])
+			fileTree(dir: it, exclude: coverageExcludes)
 		}))
 	}
 }

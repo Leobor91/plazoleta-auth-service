@@ -24,8 +24,8 @@ public class User {
     private Role role;
 
     public boolean isAdult() {
-         return birthDate != null
-                 && birthDate.plusYears(18).
-                 isBefore(LocalDate.now());
+        return birthDate != null &&
+                java.time.Period.between(birthDate, LocalDate.now()).getYears() >= 18;
+
     }
 }
