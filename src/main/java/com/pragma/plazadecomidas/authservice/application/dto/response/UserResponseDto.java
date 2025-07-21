@@ -1,10 +1,19 @@
-package com.pragma.plazadecomidas.authservice.infrastructure.adapter.input.rest.dto;
+package com.pragma.plazadecomidas.authservice.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pragma.plazadecomidas.authservice.infrastructure.utils.ValidationConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class UserResponseDto {
 
     @JsonProperty(ValidationConstants.JSON_PROPERTY_ID)

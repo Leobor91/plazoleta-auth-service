@@ -8,6 +8,9 @@ class AuthServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
+
+		// Método intencionalmente vacío: verifica que el contexto de Spring Boot cargue correctamente.
+
 	}
 
 }

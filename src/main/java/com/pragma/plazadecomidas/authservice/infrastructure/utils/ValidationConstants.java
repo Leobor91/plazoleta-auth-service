@@ -12,7 +12,7 @@ public class ValidationConstants {
     public static final String PASSWORD_REQUIRED_MESSAGE = "La clave es obligatoria";
 
     // Mensajes de formato y patrones
-    public static final String DNI_NUMBER_FORMAT_MESSAGE = "El documento de identidad debe contener solo números";
+    public static final String DNI_NUMBER_FORMAT_MESSAGE = "El documento de identidad no debe ser vació y debe contener solo números";
     public static final String DNI_NUMBER_REGEX = "^[0-9]+$";
 
     public static final String PHONE_FORMAT_MESSAGE = "El número de celular no cumple con el formato (+ prefijo y máximo 13 dígitos)";
@@ -32,7 +32,7 @@ public class ValidationConstants {
     public static final String SCHEMA_LAST_NAME_DESCRIPTION = "Apellido del usuario";
     public static final String SCHEMA_DNI_NUMBER_DESCRIPTION = "Número de documento de identidad (solo números)";
     public static final String SCHEMA_PHONE_DESCRIPTION = "Número de celular con prefijo internacional opcional (máx. 13 caracteres)";
-    public static final String SCHEMA_BIRTH_DATE_DESCRIPTION = "Fecha de nacimiento en formato YYYY-MM-DD (debe ser una fecha pasada)";
+    public static final String SCHEMA_BIRTH_DATE_DESCRIPTION = "Fecha de nacimiento en formato YYYY-MM-DD";
     public static final String SCHEMA_EMAIL_DESCRIPTION = "Correo electrónico del usuario";
     public static final String SCHEMA_PASSWORD_DESCRIPTION = "Clave de acceso del usuario (será encriptada)";
     public static final String SCHEMA_ID_DESCRIPTION = "Identificador único del usuario";
@@ -53,12 +53,25 @@ public class ValidationConstants {
     public static final String JSON_PROPERTY_ID = "id";
     public static final String JSON_PROPERTY_NAME = "nombre";
     public static final String JSON_PROPERTY_LAST_NAME = "apellido";
-    public static final String JSON_PROPERTY_DNI_NUMBER = "numero_documento_identidad";
+    public static final String JSON_PROPERTY_DNI_NUMBER = "documento_de_identidad";
     public static final String JSON_PROPERTY_PHONE = "celular";
-    public static final String JSON_PROPERTY_BIRTH_DATE = "fecha_nacimiento";
+    public static final String JSON_PROPERTY_BIRTH_DATE = "fecha_de_nacimiento";
     public static final String JSON_PROPERTY_EMAIL = "correo";
     public static final String JSON_PROPERTY_PASSWORD = "clave";
-    public static final String JSON_PROPERTY_ROLE_NAME = "nombre_rol";
+    public static final String JSON_PROPERTY_ROLE_NAME = "rol";
+
+    // --- Mensajes de excepciones de negocio (Agregados aquí) ---
+    public static final String USER_MUST_BE_ADULT_MESSAGE = "El usuario debe ser mayor de " + MIN_AGE_FOR_ADULT + " años.";
+    public static final String EMAIL_ALREADY_EXISTS_MESSAGE = "Ya existe un usuario con el correo electrónico: ";
+    public static final String DNI_ALREADY_EXISTS_MESSAGE = "Ya existe un usuario con el número de documento de identidad: ";
+    public static final String ERROR_VALIDATION_MESSAGE = "Error de validación: ";
+    public static final String PHONE_ALREADY_EXISTS_MESSAGE = "Ya existe un usuario con el número de celular: ";
+    public static final String USER_NOT_FOUND_MESSAGE = "Usuario no encontrado";
+    public static final String ROLE_NOT_FOUND_MESSAGE = "El rol 'PROPIETARIO' no se encontró en el sistema.";
+    public static final String NOT_SAVED_MESSAGE = "El usuario no pudo ser guardado, verifique los datos ingresados.";
+    public static final String  MESSAGE_KEY = "mensaje";
+    public static final String ERROR_500_MESSAGE = "Error interno del servidor. Por favor, inténtelo más tarde.";
+
 
     private ValidationConstants() {
         // Constructor privado para evitar instanciación
