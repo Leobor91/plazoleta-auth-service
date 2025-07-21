@@ -86,7 +86,7 @@ class UserRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(userResponseDto.getId()))
                 .andExpect(jsonPath("$.correo").value(userResponseDto.getEmail()))
-                .andExpect(jsonPath("$.nombre_rol").value(userResponseDto.getRoleName()));
+                .andExpect(jsonPath("$.rol").value(userResponseDto.getRoleName()));
 
         verify(ownerHandler).saveOwner(any(OwnerRequestDto.class));
     }
@@ -230,10 +230,10 @@ class UserRestControllerTest {
         mockMvc.perform(get("/api/v1/users/isOwner")
                         .param("userId", userId.toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted()) // Assuming ACCEPTED (202) based on your controller
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.id").value(userResponseDto.getId()))
                 .andExpect(jsonPath("$.correo").value(userResponseDto.getEmail()))
-                .andExpect(jsonPath("$.nombre_rol").value(userResponseDto.getRoleName()));
+                .andExpect(jsonPath("$.rol").value(userResponseDto.getRoleName()));
 
         verify(ownerHandler).isOwner(userId);
     }

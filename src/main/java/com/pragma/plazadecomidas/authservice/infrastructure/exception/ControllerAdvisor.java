@@ -21,7 +21,7 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = "Error de validación en la solicitud."; // Mensaje por defecto
+        String errorMessage = "Error de validación en la solicitud.";
         FieldError fieldError = ex.getBindingResult().getFieldError();
         if (fieldError != null) {
             errorMessage = fieldError.getDefaultMessage();
@@ -35,7 +35,6 @@ public class ControllerAdvisor {
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ExceptionResponse> handleDomainException(DomainException ex) {
         ExceptionResponse response = new ExceptionResponse(ex.getMessage());
-
         if (ex instanceof NotFound) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } else if (ex instanceof InvalidAgeException

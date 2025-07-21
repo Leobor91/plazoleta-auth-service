@@ -53,12 +53,12 @@ public class ValidationConstants {
     public static final String JSON_PROPERTY_ID = "id";
     public static final String JSON_PROPERTY_NAME = "nombre";
     public static final String JSON_PROPERTY_LAST_NAME = "apellido";
-    public static final String JSON_PROPERTY_DNI_NUMBER = "numero_documento_identidad";
+    public static final String JSON_PROPERTY_DNI_NUMBER = "documento_de_identidad";
     public static final String JSON_PROPERTY_PHONE = "celular";
-    public static final String JSON_PROPERTY_BIRTH_DATE = "fecha_nacimiento";
+    public static final String JSON_PROPERTY_BIRTH_DATE = "fecha_de_nacimiento";
     public static final String JSON_PROPERTY_EMAIL = "correo";
     public static final String JSON_PROPERTY_PASSWORD = "clave";
-    public static final String JSON_PROPERTY_ROLE_NAME = "nombre_rol";
+    public static final String JSON_PROPERTY_ROLE_NAME = "rol";
 
     // --- Mensajes de excepciones de negocio (Agregados aquí) ---
     public static final String USER_MUST_BE_ADULT_MESSAGE = "El usuario debe ser mayor de " + MIN_AGE_FOR_ADULT + " años.";
